@@ -26,10 +26,6 @@ import argparse
 import subprocess
 import traceback
 
-############ OUR CONSTANTS HERE:'
-survey_wordlist = "USERNAMES/survey_top175.txt"
-hostname = socket.gethostname()
-
 
 ############ NEW GLOBAL VARIABLES HERE:
 exitRequested = False
