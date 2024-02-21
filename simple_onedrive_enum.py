@@ -33,7 +33,6 @@ verbose = False
 debug = False
 truncate = None
 
-
 #might move some or all of these down to main
 enableKillAfter = False
 killafter=10000
@@ -42,46 +41,6 @@ endpoint = "sharepoint.com"
 
 writeLock = Semaphore(value = 1)
 stdout_lock = threading.Lock()
-
-
-stdout_lock.acquire()
-try:
-    print("""
-              ███
-             ░░░
-  ███████    ████    █████████████    ████████    ███          ███████
- ░██░░░      ░███  ░░███░░███░░███   ░███░░░███  ░███        ░███░░░███
- ░███████    ░███   ░███ ░███ ░███   ░███░░░███  ░███        ░████████
- ░░░░░░██    ░███   ░███ ░███ ░███   ░███░░░███  ░███        ░███
- ░███████   ░█████  █████░███ █████  ░████████   ░████████   ░░███████
- ░░░░░░     ░░░░░  ░░░░░  ░░░ ░░░░░  ░████        ░░░░░░░      ░░░░░░░
-                                    ░██████
-                                    ░░░░░
-                                         ██████               ███
-                                        ░░████               ░░░
-   ██████    █████████     ███████    ████████   █████████   ████   █████  █████   ███████
-  ███░░███  ░░███░░░███   ███░░░███  ███░░░███  ░░███░░░███ ░░███  ░░███  ░░███   ███░░░███
- ░███  ░███  ░███  ░███  ░████████  ░███ ░░███   ░███  ░░░   ░███   ░███   ░███  ░████████
- ░███  ░███  ░███  ░███  ░███░░░░   ░███ ░░███   ░███        ░███   ░░███  ███   ░███░░░
- ░░██████    ████  █████ ░░███████  ░░█████████  ██████      █████   ░░██████    ░░███████
-  ░░░░░░    ░░░░  ░░░░░   ░░░░░░░    ░░░░░░░░░  ░░░░░░      ░░░░░     ░░░░░░      ░░░░░░░
-
-
-   ██████  ████████   █████ ████ █████████████      +-------------------------------------------------+
-  ███░░███░░███░░███ ░░███ ░███ ░░███░░███░░███     |           Simple OneDrive Enumerator            |
- ░███████  ░███ ░███  ░███ ░███  ░███ ░███ ░███     |           2024 @nyxgeek - TrustedSec            |
- ░███░░░   ░███ ░███  ░███ ░███  ░███ ░███ ░███     |                 version 1.0                     |
- ░░██████  ████ █████ ░░████████ █████░███ █████    |  https://github.com/nyxgeek/simple_scanners     |
-  ░░░░░░  ░░░░ ░░░░░   ░░░░░░░░ ░░░░░ ░░░ ░░░░░     +-------------------------------------------------+
-
-*********************************************************************************************************
-    """)
-    sys.stdout.flush()
-finally:
-    stdout_lock.release()
-
-
-
 
 
 
@@ -131,6 +90,7 @@ class UrlChecker:
 
 
     #>>>>> OneDrive Lookup Functions
+
 
     def check_url(self, username):
 
@@ -253,11 +213,12 @@ class UrlChecker:
 
         # Format the datetime object as a string in your desired format
         formatted_date = dt_object.strftime('%Y-%m-%d %H:%M:%S')
-        stdout_lock.acquire()
-        print(f"\nBeginning enumeration of https://{self.tenant_name}-my.sharepoint.com/personal/USER_{self.safe_domain}/ at {formatted_date}")
-        print("--------------------------------------------------------------------------------------------------------")
-        sys.stdout.flush()
-        stdout_lock.release()
+        if not quietmode:
+            stdout_lock.acquire()
+            print(f"\nBeginning enumeration of https://{self.tenant_name}-my.sharepoint.com/personal/USER_{self.safe_domain}/ at {formatted_date}")
+            print("--------------------------------------------------------------------------------------------------------")
+            sys.stdout.flush()
+            stdout_lock.release()
 
 
         f = open(self.userdata)
@@ -309,7 +270,8 @@ class UrlChecker:
         minutes = (time_difference_seconds % 3600) // 60  # Get the remainder and divide by 60 to get minutes
         seconds = time_difference_seconds % 60  # Get the remainder to get seconds
 
-        print(f"\n\nOneDrive Enumeration Complete at {formatted_end_date}, taking a total of {hours}h{minutes}m{seconds}s to scan {self.totalcount} usernames.\n")
+        if not quietmode:
+            print(f"\n\nOneDrive Enumeration Complete at {formatted_end_date}, taking a total of {hours}h{minutes}m{seconds}s to scan {self.totalcount} usernames.\n")
 
 
 
@@ -397,6 +359,54 @@ class UrlChecker:
         self.userdata = tmp_untried_users
 
 
+def print_title():
+    if not quietmode:
+        stdout_lock.acquire()
+        try:
+
+            print("""
+              ███
+             ░░░
+  ███████    ████    █████████████    ████████    ███          ███████
+ ░██░░░      ░███  ░░███░░███░░███   ░███░░░███  ░███        ░███░░░███
+ ░███████    ░███   ░███ ░███ ░███   ░███░░░███  ░███        ░████████
+ ░░░░░░██    ░███   ░███ ░███ ░███   ░███░░░███  ░███        ░███
+ ░███████   ░█████  █████░███ █████  ░████████   ░████████   ░░███████
+ ░░░░░░     ░░░░░  ░░░░░  ░░░ ░░░░░  ░████        ░░░░░░░      ░░░░░░░
+                                    ░██████
+                                    ░░░░░
+                                         ██████               ███
+                                        ░░████               ░░░
+   ██████    █████████     ███████    ████████   █████████   ████   █████  █████   ███████
+  ███░░███  ░░███░░░███   ███░░░███  ███░░░███  ░░███░░░███ ░░███  ░░███  ░░███   ███░░░███
+ ░███  ░███  ░███  ░███  ░████████  ░███ ░░███   ░███  ░░░   ░███   ░███   ░███  ░████████
+ ░███  ░███  ░███  ░███  ░███░░░░   ░███ ░░███   ░███        ░███   ░░███  ███   ░███░░░
+ ░░██████    ████  █████ ░░███████  ░░█████████  ██████      █████   ░░██████    ░░███████
+  ░░░░░░    ░░░░  ░░░░░   ░░░░░░░    ░░░░░░░░░  ░░░░░░      ░░░░░     ░░░░░░      ░░░░░░░
+
+
+   ██████  ████████   █████ ████ █████████████      +-------------------------------------------------+
+  ███░░███░░███░░███ ░░███ ░███ ░░███░░███░░███     |           Simple OneDrive Enumerator            |
+ ░███████  ░███ ░███  ░███ ░███  ░███ ░███ ░███     |           2024 @nyxgeek - TrustedSec            |
+ ░███░░░   ░███ ░███  ░███ ░███  ░███ ░███ ░███     |                 version 1.0                     |
+ ░░██████  ████ █████ ░░████████ █████░███ █████    |  https://github.com/nyxgeek/simple_scanners     |
+  ░░░░░░  ░░░░ ░░░░░   ░░░░░░░░ ░░░░░ ░░░ ░░░░░     +-------------------------------------------------+
+
+*********************************************************************************************************
+            """)
+            sys.stdout.flush()
+        finally:
+            stdout_lock.release()
+
+
+
+
+
+
+
+
+
+
 
 
 # look up tenant if it's missing
@@ -430,12 +440,14 @@ def lookup_tenant(domain):
         domain_extract = re.findall('<Domain>(.*?)<\/Domain>', r.content.decode('utf-8'))
         tenant_extract = [i for i, x in enumerate(domain_extract) if ".onmicrosoft.com" in x and ".mail.onmicrosoft.com" not in x] # this line gets the matching list item numbers only
         if ( len(tenant_extract) > 0):
-            print(f"\nTenants Identified:\n---------------------")
+            if not quietmode:
+                print(f"\nTenants Identified:\n---------------------")
             for found_tenant in tenant_extract:
                 cleaned_tenant = (domain_extract[found_tenant]).replace('.onmicrosoft.com','').lower()
-                print(f'{cleaned_tenant}')
+                if not quietmode:
+                    print(f'{cleaned_tenant}')
+                    print("")
                 tenant_list.append(cleaned_tenant)
-            print("")
         else:
             print("No tenants found. Exiting.")
             exit()
@@ -458,10 +470,11 @@ def lookup_tenant(domain):
                 onedrive_list.append(test_tenant)
         #print(onedrive_list)
         if ( len(onedrive_list) > 0 ):
-            print(f"OneDrive hosts found:\n---------------------")
-            for onedrive_host in onedrive_list:
-                print(f"{onedrive_host}-my.sharepoint.com")
-            print("\n")
+            if not quietmode:
+                print(f"OneDrive hosts found:\n---------------------")
+                for onedrive_host in onedrive_list:
+                    print(f"{onedrive_host}-my.sharepoint.com")
+                print("\n")
             if len(onedrive_list) == 1:
                 tenantname = onedrive_list[0]
             else:       #list is longer than 1, so iterated
@@ -478,7 +491,9 @@ def lookup_tenant(domain):
                     for tenant in tenant_list:
                         print(f"{tenant}")
             #print("--------------------------------------------------------------------------------------------------------")
-            print(f"++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++\n")
+
+            if not quietmode:
+                print(f"++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++\n")
 
             if verbose:
                 print(f"INFO: Tenant name has been set to: {tenantname}")
@@ -514,7 +529,7 @@ def signal_handler(sig, frame):
 
 
 def main():
-    global thread_count, killafter, enableKillAfter, verbose, debug
+    global thread_count, killafter, enableKillAfter, verbose, debug, quietmode
 
     #set up our ctrl-c checker
     signal.signal(signal.SIGINT, signal_handler)
@@ -537,6 +552,7 @@ def main():
     parser.add_argument("-v", "--verbose", help="enable verbose output", action='store_true', default=False)
     parser.add_argument("-D", "--debug", help="enable debug output", action='store_true', default=False)
     parser.add_argument("-tr", "--truncate", help="truncate to x characters", metavar='')
+    parser.add_argument("-q", "--quietmode", help="Supress title graphics etc - only results displayed", action='store_true', default=False)
 
     # read arguments from the command line
     args = parser.parse_args()
@@ -547,7 +563,10 @@ def main():
     isUser = False
     isUserFile = False
     isPlaylist = False
+    quietmode = args.quietmode
 
+    if not quietmode:
+        print_title()
 
     if verbose:
         print("Verbose is ON")
@@ -631,6 +650,13 @@ def main():
 
     #print("Environment is set to {}".format(environment))
 
+
+
+
+
+
+
+
     # Here we see what type of input it is: username, userfile, user directory, playlist -- and process accordingly
     if isUser:
         if verbose:
@@ -695,7 +721,8 @@ def main():
                     pass
                 finally:
                     del url_checker
-                print("Completed")
+                if not quietmode:
+                    print("Completed")
 
             elif os.path.isdir(userfile):   #otherwise if it's a dir
                 if verbose:
